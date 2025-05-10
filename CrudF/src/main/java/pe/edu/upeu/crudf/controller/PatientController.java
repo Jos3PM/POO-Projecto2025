@@ -4,10 +4,15 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.print.*;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pe.edu.upeu.crudf.model.Patient;
+import pe.edu.upeu.crudf.model.Invoice;
 import pe.edu.upeu.crudf.service.PatientService;
+import pe.edu.upeu.crudf.service.InvoiceService;
 
 import java.time.LocalDate;
 
@@ -24,9 +29,14 @@ public class PatientController {
     @FXML private TextField addressField;
     @FXML private TextField phoneField;
     @FXML private TextField bloodTypeField;
+    @FXML private TextField serviceField;
+    @FXML private TextField amountField;
 
     @Autowired
     private PatientService patientService;
+    
+    @Autowired
+    private InvoiceService invoiceService;
 
     @FXML
     public void initialize() {
@@ -65,6 +75,41 @@ public class PatientController {
         }
     }
 
+    @FXML
+    private void handleGenerateInvoice() {
+        Patient selectedPatient = patientTable.getSelectionModel().getSelectedItem();
+        if (selectedPatient != null && !serviceField.getText().isEmpty() && !amountField.getText().isEmpty()) {
+            Invoice invoice = new Invoice();
+            invoice.setPatient(selectedPatient);
+            invoice.setServiceDescription(serviceField.getText());
+            invoice.setAmount(Double.parseDouble(amountField.getText()));
+            
+            Invoice savedInvoice = invoiceService.generateInvoice(invoice);
+            printInvoice(savedInvoice);
+        }
+    }
+
+    private void printInvoice(Invoice invoice) {
+        VBox content = new VBox(10);
+        content.getChildren().addAll(
+            new Text("HOSPITAL INVOICE"),
+            new Text("Invoice #: " + invoice.getInvoiceNumber()),
+            new Text("Date: " + invoice.getDateTime()),
+            new Text("Patient: " + invoice.getPatient().getName()),
+            new Text("DNI: " + invoice.getPatient().getDni()),
+            new Text("Service: " + invoice.getServiceDescription()),
+            new Text("Amount: $" + invoice.getAmount())
+        );
+
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if (job != null) {
+            boolean printed = job.printPage(content);
+            if (printed) {
+                job.endJob();
+            }
+        }
+    }
+
     private void clearFields() {
         nameField.clear();
         dniField.clear();
@@ -72,5 +117,7 @@ public class PatientController {
         addressField.clear();
         phoneField.clear();
         bloodTypeField.clear();
+        serviceField.clear();
+        amountField.clear();
     }
 }

@@ -27,11 +27,18 @@
 
         <Label text="Blood Type:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
         <TextField fx:id="bloodTypeField" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+        <Label text="Service:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+        <TextField fx:id="serviceField" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+
+        <Label text="Amount:" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+        <TextField fx:id="amountField" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
     </GridPane>
 
     <HBox spacing="10" alignment="CENTER">
         <Button text="Save" onAction="#handleSave"/>
         <Button text="Delete" onAction="#handleDelete"/>
+        <Button text="Generate Invoice" onAction="#handleGenerateInvoice"/>
     </HBox>
 
     <TableView fx:id="patientTable" VBox.vgrow="ALWAYS">

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Registro de Pacientes</title>
+    <style>
+        :root {
+          --primary-color: #4CAF50;
+          --accent-color: #388E3C;
+          --background-color: #f5f5f5;
+          --text-color: #333;
+        }
+
+        * {
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: 'Segoe UI', sans-serif;
+          background-color: var(--background-color);
+          margin: 0;
+          padding: 20px;
+          color: var(--text-color);
+        }
+
+        h2 {
+          text-align: center;
+          color: var(--primary-color);
+          margin-bottom: 30px;
+        }
+
+        .card {
+          background-color: #fff;
+          border-radius: 10px;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+          padding: 30px;
+          margin: auto;
+          max-width: 1200px;
+        }
+
+        .form-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 15px;
+        }
+
+        .form-group {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .form-group label {
+          margin-bottom: 5px;
+          font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group input[type="date"] {
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          font-size: 14px;
+        }
+
+        .button {
+          background-color: var(--primary-color);
+          color: white;
+          border: none;
+          padding: 12px 20px;
+          font-size: 16px;
+          cursor: pointer;
+          border-radius: 6px;
+          transition: background-color 0.3s;
+        }
+
+        .button:hover {
+          background-color: var(--accent-color);
+        }
+
+        .search-bar {
+          margin: 20px 0;
+          display: flex;
+          justify-content: space-between;
+          gap: 10px;
+        }
+
+        .search-bar input {
+          flex: 1;
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 20px;
+          background-color: white;
+          border-radius: 10px;
+          overflow: hidden;
+        }
+
+        th, td {
+          padding: 12px 15px;
+          text-align: left;
+          border-bottom: 1px solid #eee;
+        }
+
+        th {
+          background-color: var(--primary-color);
+          color: white;
+        }
+
+        .action-buttons {
+          margin-top: 20px;
+          text-align: center;
+        }
+
+        .action-buttons button {
+          margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Formulario de Registro de Paciente</h2>
+
+<div class="card">
+    <div class="form-grid">
+        <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input id="nombre" type="text">
+        </div>
+        <div class="form-group">
+            <label for="dni">DNI</label>
+            <input id="dni" type="text">
+        </div>
+        <div class="form-group">
+            <label for="fechaNacimiento">Fecha de nacimiento</label>
+            <input id="fechaNacimiento" type="date">
+        </div>
+        <div class="form-group">
+            <label for="telefono">N° Teléfono</label>
+            <input id="telefono" type="text">
+        </div>
+        <div class="form-group">
+            <label for="direccion">Dirección</label>
+            <input id="direccion" type="text">
+        </div>
+        <div class="form-group">
+            <label for="edad">Edad</label>
+            <input id="edad" type="number">
+        </div>
+        <div class="form-group">
+            <label for="sexo">Sexo/Género</label>
+            <input id="sexo" type="text">
+        </div>
+        <div class="form-group">
+            <label for="correo">Correo</label>
+            <input id="correo" type="email">
+        </div>
+        <div class="form-group">
+            <label for="caso">Caso</label>
+            <input id="caso" type="text">
+        </div>
+        <div class="form-group">
+            <label for="estatura">Estatura</label>
+            <input id="estatura" type="text">
+        </div>
+        <div class="form-group">
+            <label for="peso">Peso</label>
+            <input id="peso" type="text">
+        </div>
+        <div class="form-group">
+            <label for="tipoSangre">Tipo de Sangre</label>
+            <input id="tipoSangre" type="text">
+        </div>
+        <div class="form-group">
+            <label for="enfermedadGenetica">Enfermedad Genética</label>
+            <input id="enfermedadGenetica" type="text">
+        </div>
+        <div class="form-group">
+            <label>&nbsp;</label>
+            <button class="button" onclick="handleGuardar()">ADD</button>
+        </div>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" id="buscar" placeholder="Buscar paciente...">
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Id Paciente</th>
+            <th>Nombre</th>
+            <th>Edad</th>
+            <th>Caso</th>
+        </tr>
+        </thead>
+        <tbody id="tablaPacientes">
+        <!-- Datos dinámicos aquí -->
+        </tbody>
+    </table>
+
+    <div class="action-buttons">
+        <button class="button" onclick="handleGuardar()">Editar</button>
+        <button class="button" onclick="handleEliminar()">Eliminar</button>
+    </div>
+</div>
+
+<script>
+    async function handleGuardar() {
+        const paciente = {
+            nombre: document.getElementById("nombre").value,
+            dni: document.getElementById("dni").value,
+            fechaNacimiento: document.getElementById("fechaNacimiento").value,
+            telefono: document.getElementById("telefono").value,
+            direccion: document.getElementById("direccion").value,
+            edad: document.getElementById("edad").value,
+            sexo: document.getElementById("sexo").value,
+            correo: document.getElementById("correo").value,
+            caso: document.getElementById("caso").value,
+            estatura: document.getElementById("estatura").value,
+            peso: document.getElementById("peso").value,
+            tipoSangre: document.getElementById("tipoSangre").value,
+            enfermedadGenetica: document.getElementById("enfermedadGenetica").value
+        };
+
+        try {
+            const response = await fetch("/api/pacientes", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(paciente)
+            });
+
+            if (response.ok) {
+                alert("Paciente registrado/actualizado con éxito");
+                cargarPacientes(); // Refresh the table
+            } else {
+                alert("Error al guardar/editar el paciente");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error al guardar/editar el paciente");
+        }
+    }
+
+    async function handleEliminar() {
+        const id = prompt("Ingrese el ID del paciente a eliminar:");
+
+        if (!id) {
+            alert("ID no proporcionado");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/pacientes/${id}`, {
+                method: "DELETE"
+            });
+
+            if (response.ok) {
+                alert("Paciente eliminado con éxito");
+                cargarPacientes(); // Refresh the table
+            } else {
+                alert("Error al eliminar el paciente");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error al eliminar el paciente");
+        }
+    }
+
+    async function cargarPacientes() {
+        try {
+            const response = await fetch("/api/pacientes");
+            if (response.ok) {
+                const pacientes = await response.json();
+                const tablaPacientes = document.getElementById("tablaPacientes");
+                tablaPacientes.innerHTML = ""; // Clear existing rows
+
+                pacientes.forEach(paciente => {
+                    const fila = document.createElement("tr");
+                    fila.innerHTML = `
+                        <td>${paciente.id}</td>
+                        <td>${paciente.nombre}</td>
+                        <td>${paciente.edad}</td>
+                        <td>${paciente.caso}</td>
+                    `;
+                    tablaPacientes.appendChild(fila);
+                });
+            } else {
+                alert("Error al cargar los pacientes");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error al cargar los pacientes");
+        }
+    }
+
+    // Load patients when the page loads
+    document.addEventListener("DOMContentLoaded", cargarPacientes);
+</script>
+
+</body>
+</html>

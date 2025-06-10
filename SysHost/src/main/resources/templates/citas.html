@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Citas - SysHost</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --info-color: #8e44ad;
+            --background-color: #ecf0f1;
+            --text-color: #2c3e50;
+            --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            color: var(--primary-color);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: 1fr auto auto auto;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-input, .status-select {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus, .status-select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #2ecc71);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #c0392b);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color), #e67e22);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info-color), #9b59b6);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .table-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        tr:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-align: center;
+            display: inline-block;
+            min-width: 80px;
+        }
+
+        .badge-programada {
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            color: #0c5460;
+        }
+
+        .badge-en-curso {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            color: #856404;
+        }
+
+        .badge-completada {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+        }
+
+        .badge-cancelada {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        @media (max-width: 1200px) {
+            .controls {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .controls > * {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            table {
+                font-size: 0.8rem;
+            }
+            
+            th, td {
+                padding: 8px 6px;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .datetime-display {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .cost-display {
+            font-weight: bold;
+            color: var(--success-color);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>📅 Gestión de Citas</h1>
+        <p>Administración de Citas Médicas</p>
+    </header>
+
+    <div class="container">
+        <a href="/" class="back-link">← Volver al Dashboard</a>
+        
+        <div class="controls">
+            <select class="status-select" id="statusSelect">
+                <option value="">Todos los estados</option>
+                <option value="Programada">Programada</option>
+                <option value="En Curso">En Curso</option>
+                <option value="Completada">Completada</option>
+                <option value="Cancelada">Cancelada</option>
+            </select>
+            <button class="btn btn-primary" onclick="filtrarPorEstado()">🔍 Filtrar</button>
+            <button class="btn btn-success" onclick="mostrarFormularioNueva()">➕ Nueva Cita</button>
+            <button class="btn btn-primary" onclick="cargarTodas()">📋 Mostrar Todas</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Paciente</th>
+                        <th>Médico</th>
+                        <th>Fecha y Hora</th>
+                        <th>Motivo</th>
+                        <th>Estado</th>
+                        <th>Costo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="citasTable">
+                    <tr th:each="cita : ${citas}">
+                        <td th:text="${cita.id}"></td>
+                        <td th:text="${cita.paciente.nombre}"></td>
+                        <td>
+                            <div th:text="${cita.medico.nombre}"></div>
+                            <small th:text="${cita.medico.especialidad}" style="color: #666;"></small>
+                        </td>
+                        <td>
+                            <div th:text="${#temporals.format(cita.fechaHora, 'dd/MM/yyyy')}"></div>
+                            <small th:text="${#temporals.format(cita.fechaHora, 'HH:mm')}" class="datetime-display"></small>
+                        </td>
+                        <td th:text="${#strings.abbreviate(cita.motivo, 50)}"></td>
+                        <td>
+                            <span th:class="'badge badge-' + ${#strings.toLowerCase(#strings.replace(cita.estado, ' ', '-'))}"
+                                  th:text="${cita.estado}"></span>
+                        </td>
+                        <td>
+                            <span th:if="${cita.costo}" th:text="'S/ ' + ${cita.costo}" class="cost-display"></span>
+                            <span th:unless="${cita.costo}">-</span>
+                        </td>
+                        <td class="actions">
+                            <button class="btn btn-primary btn-sm" th:onclick="'verDetalle(' + ${cita.id} + ')'">👁️</button>
+                            <button class="btn btn-warning btn-sm" th:onclick="'editarCita(' + ${cita.id} + ')'">✏️</button>
+                            <button class="btn btn-info btn-sm" th:onclick="'cambiarEstado(' + ${cita.id} + ')'">🔄</button>
+                            <button class="btn btn-danger btn-sm" th:onclick="'eliminarCita(' + ${cita.id} + ')'">🗑️</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal para nueva/editar cita -->
+    <div id="citaModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border-radius: 15px; width: 90%; max-width: 700px; max-height: 90vh; overflow-y: auto;">
+            <h3 id="modalTitle">Nueva Cita</h3>
+            <form id="citaForm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                <input type="hidden" id="citaId">
+                
+                <div>
+                    <label>Paciente *</label>
+                    <select id="pacienteId" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        <option value="">Seleccionar paciente...</option>
+                        <option th:each="paciente : ${pacientes}" th:value="${paciente.id}" th:text="${paciente.nombre + ' - ' + paciente.dni}"></option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Médico *</label>
+                    <select id="medicoId" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        <option value="">Seleccionar médico...</option>
+                        <option th:each="medico : ${medicos}" th:value="${medico.id}" th:text="${medico.nombre + ' - ' + medico.especialidad}"></option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Fecha *</label>
+                    <input type="date" id="fecha" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                
+                <div>
+                    <label>Hora *</label>
+                    <input type="time" id="hora" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                
+                <div>
+                    <label>Estado</label>
+                    <select id="estado" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        <option value="Programada">Programada</option>
+                        <option value="En Curso">En Curso</option>
+                        <option value="Completada">Completada</option>
+                        <option value="Cancelada">Cancelada</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Costo (S/)</label>
+                    <input type="number" id="costo" step="0.01" min="0" max="10000" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                
+                <div style="grid-column: 1 / -1;">
+                    <label>Motivo *</label>
+                    <textarea id="motivo" rows="3" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                </div>
+                
+                <div style="grid-column: 1 / -1;">
+                    <label>Observaciones</label>
+                    <textarea id="observaciones" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                </div>
+                
+                <div style="grid-column: 1 / -1; display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem;">
+                    <button type="button" class="btn btn-danger" onclick="cerrarModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let editandoCita = false;
+
+        async function filtrarPorEstado() {
+            const estado = document.getElementById('statusSelect').value;
+            
+            if (!estado) {
+                cargarTodas();
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/citas/estado/${encodeURIComponent(estado)}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    actualizarTabla(result.data);
+                    if (result.data.length === 0) {
+                        mostrarAlerta(`No se encontraron citas con estado: ${estado}`, 'warning');
+                    }
+                } else {
+                    mostrarAlerta('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al filtrar citas', 'error');
+            }
+        }
+
+        async function cargarTodas() {
+            try {
+                const response = await fetch('/api/citas');
+                const result = await response.json();
+
+                if (result.success) {
+                    actualizarTabla(result.data);
+                    document.getElementById('statusSelect').value = '';
+                } else {
+                    mostrarAlerta('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al cargar citas', 'error');
+            }
+        }
+
+        function actualizarTabla(citas) {
+            const tbody = document.getElementById('citasTable');
+            tbody.innerHTML = '';
+
+            if (citas.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="no-data">No se encontraron citas</td></tr>';
+                return;
+            }
+
+            citas.forEach(cita => {
+                const fechaHora = new Date(cita.fechaHora);
+                const fecha = fechaHora.toLocaleDateString('es-ES');
+                const hora = fechaHora.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'});
+                
+                const estadoClass = cita.estado.toLowerCase().replace(' ', '-');
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${cita.id}</td>
+                    <td>${cita.paciente.nombre}</td>
+                    <td>
+                        <div>${cita.medico.nombre}</div>
+                        <small style="color: #666;">${cita.medico.especialidad}</small>
+                    </td>
+                    <td>
+                        <div>${fecha}</div>
+                        <small class="datetime-display">${hora}</small>
+                    </td>
+                    <td>${cita.motivo.length > 50 ? cita.motivo.substring(0, 50) + '...' : cita.motivo}</td>
+                    <td>
+                        <span class="badge badge-${estadoClass}">
+                            ${cita.estado}
+                        </span>
+                    </td>
+                    <td>
+                        ${cita.costo ? '<span class="cost-display">S/ ' + cita.costo + '</span>' : '-'}
+                    </td>
+                    <td class="actions">
+                        <button class="btn btn-primary btn-sm" onclick="verDetalle(${cita.id})">👁️</button>
+                        <button class="btn btn-warning btn-sm" onclick="editarCita(${cita.id})">✏️</button>
+                        <button class="btn btn-info btn-sm" onclick="cambiarEstado(${cita.id})">🔄</button>
+                        <button class="btn btn-danger btn-sm" onclick="eliminarCita(${cita.id})">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function verDetalle(id) {
+            try {
+                const response = await fetch(`/api/citas/${id}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const cita = result.data;
+                    const fechaHora = new Date(cita.fechaHora);
+                    alert(`Detalles de la Cita:
+                    
+ID: ${cita.id}
+Paciente: ${cita.paciente.nombre}
+Médico: ${cita.medico.nombre} (${cita.medico.especialidad})
+Fecha: ${fechaHora.toLocaleDateString('es-ES')}
+Hora: ${fechaHora.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})}
+Motivo: ${cita.motivo}
+Estado: ${cita.estado}
+Costo: ${cita.costo ? 'S/ ' + cita.costo : 'No especificado'}
+Observaciones: ${cita.observaciones || 'Sin observaciones'}`);
+                } else {
+                    mostrarAlerta('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al obtener detalles de la cita', 'error');
+            }
+        }
+
+        function mostrarFormularioNueva() {
+            editandoCita = false;
+            document.getElementById('modalTitle').textContent = 'Nueva Cita';
+            document.getElementById('citaForm').reset();
+            document.getElementById('citaId').value = '';
+            
+            // Establecer fecha mínima como hoy
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('fecha').min = hoy;
+            
+            document.getElementById('citaModal').style.display = 'block';
+        }
+
+        async function editarCita(id) {
+            try {
+                const response = await fetch(`/api/citas/${id}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const cita = result.data;
+                    editandoCita = true;
+                    document.getElementById('modalTitle').textContent = 'Editar Cita';
+                    
+                    const fechaHora = new Date(cita.fechaHora);
+                    const fecha = fechaHora.toISOString().split('T')[0];
+                    const hora = fechaHora.toTimeString().split(' ')[0].substring(0, 5);
+                    
+                    document.getElementById('citaId').value = cita.id;
+                    document.getElementById('pacienteId').value = cita.paciente.id;
+                    document.getElementById('medicoId').value = cita.medico.id;
+                    document.getElementById('fecha').value = fecha;
+                    document.getElementById('hora').value = hora;
+                    document.getElementById('motivo').value = cita.motivo;
+                    document.getElementById('observaciones').value = cita.observaciones || '';
+                    document.getElementById('estado').value = cita.estado;
+                    document.getElementById('costo').value = cita.costo || '';
+                    
+                    document.getElementById('citaModal').style.display = 'block';
+                } else {
+                    mostrarAlerta('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al cargar datos de la cita', 'error');
+            }
+        }
+
+        async function cambiarEstado(id) {
+            const nuevoEstado = prompt('Ingrese el nuevo estado:\n- Programada\n- En Curso\n- Completada\n- Cancelada');
+            
+            if (!nuevoEstado || !['Programada', 'En Curso', 'Completada', 'Cancelada'].includes(nuevoEstado)) {
+                mostrarAlerta('Estado inválido', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/citas/${id}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const cita = result.data;
+                    cita.estado = nuevoEstado;
+                    
+                    const updateResponse = await fetch(`/api/citas/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(cita)
+                    });
+                    
+                    const updateResult = await updateResponse.json();
+                    
+                    if (updateResult.success) {
+                        mostrarAlerta('Estado actualizado exitosamente', 'success');
+                        cargarTodas();
+                    } else {
+                        mostrarAlerta('Error: ' + updateResult.message, 'error');
+                    }
+                } else {
+                    mostrarAlerta('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al cambiar estado', 'error');
+            }
+        }
+
+        async function eliminarCita(id) {
+            if (!confirm('¿Está seguro de que desea eliminar esta cita?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/citas/${id}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    mostrarAlerta('Cita eliminada exitosamente', 'success');
+                    cargarTodas();
+                } else {
+                    mostrarAlerta('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al eliminar cita', 'error');
+            }
+        }
+
+        function cerrarModal() {
+            document.getElementById('citaModal').style.display = 'none';
+        }
+
+        // Manejar envío del formulario
+        document.getElementById('citaForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fecha = document.getElementById('fecha').value;
+            const hora = document.getElementById('hora').value;
+            const fechaHora = new Date(`${fecha}T${hora}`);
+            
+            const cita = {
+                paciente: { id: parseInt(document.getElementById('pacienteId').value) },
+                medico: { id: parseInt(document.getElementById('medicoId').value) },
+                fechaHora: fechaHora.toISOString(),
+                motivo: document.getElementById('motivo').value,
+                observaciones: document.getElementById('observaciones').value || null,
+                estado: document.getElementById('estado').value,
+                costo: parseFloat(document.getElementById('costo').value) || null
+            };
+
+            try {
+                const url = editandoCita ? `/api/citas/${document.getElementById('citaId').value}` : '/api/citas';
+                const method = editandoCita ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(cita)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    mostrarAlerta(editandoCita ? 'Cita actualizada exitosamente' : 'Cita registrada exitosamente', 'success');
+                    cerrarModal();
+                    cargarTodas();
+                } else {
+                    mostrarAlerta('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al guardar cita', 'error');
+            }
+        });
+
+        function mostrarAlerta(mensaje, tipo) {
+            const alerta = document.createElement('div');
+            alerta.className = `alert alert-${tipo}`;
+            alerta.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 10px;
+                color: white;
+                font-weight: bold;
+                z-index: 10000;
+                max-width: 400px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            `;
+            
+            if (tipo === 'success') {
+                alerta.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
+            } else if (tipo === 'warning') {
+                alerta.style.background = 'linear-gradient(135deg, #f39c12, #e67e22)';
+            } else {
+                alerta.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
+            }
+            
+            alerta.textContent = mensaje;
+            document.body.appendChild(alerta);
+
+            setTimeout(() => {
+                alerta.remove();
+            }, 5000);
+        }
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('citaModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarModal();
+            }
+        });
+
+        // Establecer fecha mínima al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('fecha').min = hoy;
+        });
+    </script>
+</body>
+</html>

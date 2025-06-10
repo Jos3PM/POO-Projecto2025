@@ -11,9 +11,10 @@
             --accent-color: #e74c3c;
             --success-color: #27ae60;
             --warning-color: #f39c12;
+            --info-color: #8e44ad;
             --background-color: #ecf0f1;
             --text-color: #2c3e50;
-            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         * {
@@ -24,134 +25,209 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--background-color);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: var(--text-color);
             line-height: 1.6;
+            min-height: 100vh;
         }
 
         .header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            color: var(--primary-color);
             padding: 2rem 0;
             text-align: center;
             box-shadow: var(--card-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 3rem;
             margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
+            font-size: 1.2rem;
+            opacity: 0.8;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
             margin: 2rem 0;
         }
 
         .stat-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 20px;
             box-shadow: var(--card-shadow);
             text-align: center;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--success-color));
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
         }
 
         .stat-number {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: bold;
             color: var(--secondary-color);
             margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
         .stat-label {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             color: var(--text-color);
             opacity: 0.8;
+            font-weight: 500;
         }
 
         .actions {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2rem;
-            margin: 3rem 0;
+            margin: 4rem 0;
         }
 
         .action-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 20px;
             box-shadow: var(--card-shadow);
             text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--warning-color), var(--accent-color));
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
         }
 
         .action-card h3 {
             color: var(--primary-color);
             margin-bottom: 1rem;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
         }
 
         .action-card p {
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             opacity: 0.8;
+            font-size: 1.1rem;
         }
 
         .btn {
             display: inline-block;
-            padding: 12px 24px;
-            background: var(--secondary-color);
+            padding: 15px 30px;
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
             color: white;
             text-decoration: none;
-            border-radius: 6px;
-            transition: background-color 0.3s ease;
+            border-radius: 50px;
+            transition: all 0.3s ease;
             border: none;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
         }
 
         .btn:hover {
-            background: #2980b9;
-        }
-
-        .btn-primary {
-            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
         }
 
         .btn-success {
-            background: var(--success-color);
+            background: linear-gradient(135deg, var(--success-color), #2ecc71);
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
         }
 
         .btn-warning {
-            background: var(--warning-color);
+            background: linear-gradient(135deg, var(--warning-color), #e67e22);
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+        }
+
+        .btn-warning:hover {
+            box-shadow: 0 8px 25px rgba(243, 156, 18, 0.4);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info-color), #9b59b6);
+            box-shadow: 0 4px 15px rgba(142, 68, 173, 0.3);
+        }
+
+        .btn-info:hover {
+            box-shadow: 0 8px 25px rgba(142, 68, 173, 0.4);
         }
 
         .footer {
-            background: var(--primary-color);
+            background: rgba(44, 62, 80, 0.95);
+            backdrop-filter: blur(10px);
             color: white;
             text-align: center;
-            padding: 2rem 0;
+            padding: 3rem 0;
             margin-top: 4rem;
+        }
+
+        .footer p {
+            font-size: 1.1rem;
+            opacity: 0.9;
         }
 
         @media (max-width: 768px) {
             .header h1 {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
             
             .container {
@@ -162,54 +238,148 @@
             .actions {
                 grid-template-columns: 1fr;
             }
+            
+            .stat-card,
+            .action-card {
+                padding: 2rem;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
     </style>
 </head>
 <body>
     <header class="header">
         <h1>🏥 SysHost</h1>
-        <p>Sistema de Gestión Hospitalaria</p>
+        <p>Sistema Integral de Gestión Hospitalaria</p>
     </header>
 
     <div class="container">
         <div class="stats-grid">
             <div class="stat-card">
+                <span class="stat-icon">👥</span>
                 <div class="stat-number" th:text="${totalPacientes}">0</div>
                 <div class="stat-label">Total de Pacientes</div>
             </div>
             <div class="stat-card">
+                <span class="stat-icon">✅</span>
                 <div class="stat-number" th:text="${pacientesActivos}">0</div>
                 <div class="stat-label">Pacientes Activos</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">24/7</div>
-                <div class="stat-label">Disponibilidad</div>
+                <span class="stat-icon">👨‍⚕️</span>
+                <div class="stat-number" th:text="${totalMedicos}">0</div>
+                <div class="stat-label">Total de Médicos</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">🩺</span>
+                <div class="stat-number" th:text="${medicosActivos}">0</div>
+                <div class="stat-label">Médicos Activos</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">📅</span>
+                <div class="stat-number" th:text="${citasProgramadas}">0</div>
+                <div class="stat-label">Citas Programadas</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">📋</span>
+                <div class="stat-number" th:text="${citasHoy}">0</div>
+                <div class="stat-label">Citas Hoy</div>
             </div>
         </div>
 
         <div class="actions">
             <div class="action-card">
-                <h3>📋 Gestión de Pacientes</h3>
-                <p>Registra, edita y consulta información de pacientes de manera eficiente.</p>
-                <a href="/pacientes" class="btn btn-primary">Gestionar Pacientes</a>
+                <h3>👥 Gestión de Pacientes</h3>
+                <p>Registra, edita y consulta información completa de pacientes de manera eficiente y segura.</p>
+                <a href="/pacientes" class="btn">Gestionar Pacientes</a>
+            </div>
+            
+            <div class="action-card">
+                <h3>👨‍⚕️ Gestión de Médicos</h3>
+                <p>Administra el personal médico, especialidades y información profesional del equipo.</p>
+                <a href="/medicos" class="btn btn-success">Gestionar Médicos</a>
+            </div>
+            
+            <div class="action-card">
+                <h3>📅 Gestión de Citas</h3>
+                <p>Programa, modifica y controla las citas médicas entre pacientes y doctores.</p>
+                <a href="/citas" class="btn btn-warning">Gestionar Citas</a>
             </div>
             
             <div class="action-card">
                 <h3>📊 Formulario Web</h3>
-                <p>Accede al formulario interactivo para registro rápido de pacientes.</p>
-                <a href="/static/Index.html" class="btn btn-success">Abrir Formulario</a>
+                <p>Accede al formulario interactivo para registro rápido y eficiente de pacientes.</p>
+                <a href="/static/Index.html" class="btn btn-info">Abrir Formulario</a>
             </div>
             
             <div class="action-card">
                 <h3>🔍 API REST</h3>
-                <p>Documentación y acceso a los endpoints de la API REST.</p>
-                <a href="/api/pacientes" class="btn btn-warning">Ver API</a>
+                <p>Documentación y acceso directo a los endpoints de la API REST del sistema.</p>
+                <a href="/api/pacientes" class="btn">Ver API</a>
+            </div>
+            
+            <div class="action-card">
+                <h3>📈 Reportes</h3>
+                <p>Genera reportes estadísticos y análisis de datos del sistema hospitalario.</p>
+                <a href="#" class="btn btn-success">Próximamente</a>
             </div>
         </div>
     </div>
 
     <footer class="footer">
-        <p>&copy; 2025 SysHost - Sistema de Gestión Hospitalaria. Todos los derechos reservados.</p>
+        <p>&copy; 2025 SysHost - Sistema Integral de Gestión Hospitalaria. Todos los derechos reservados.</p>
+        <p>Desarrollado con Spring Boot, Thymeleaf y tecnologías modernas</p>
     </footer>
+
+    <script>
+        // Animación de números contadores
+        function animateNumbers() {
+            const numbers = document.querySelectorAll('.stat-number');
+            numbers.forEach(number => {
+                const target = parseInt(number.textContent);
+                let current = 0;
+                const increment = target / 50;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    number.textContent = Math.floor(current);
+                }, 30);
+            });
+        }
+
+        // Ejecutar animación al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(animateNumbers, 500);
+        });
+
+        // Efecto de hover mejorado para las tarjetas
+        document.querySelectorAll('.stat-card, .action-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
 </body>
 </html>

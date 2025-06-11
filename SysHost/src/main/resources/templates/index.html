@@ -300,6 +300,16 @@
                 <div class="stat-number" th:text="${citasHoy}">0</div>
                 <div class="stat-label">Citas Hoy</div>
             </div>
+            <div class="stat-card">
+                <span class="stat-icon">🏥</span>
+                <div class="stat-number" th:text="${consultasHoy}">0</div>
+                <div class="stat-label">Consultas Hoy</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">🎯</span>
+                <div class="stat-number" th:text="${totalEspecialidades}">0</div>
+                <div class="stat-label">Especialidades</div>
+            </div>
         </div>
 
         <div class="actions">
@@ -322,7 +332,19 @@
             </div>
             
             <div class="action-card">
-                <h3>📊 Formulario Web</h3>
+                <h3>📋 Historiales Médicos</h3>
+                <p>Gestiona los historiales clínicos, diagnósticos, tratamientos y seguimientos médicos.</p>
+                <a href="/historiales" class="btn btn-info">Gestionar Historiales</a>
+            </div>
+            
+            <div class="action-card">
+                <h3>📊 Reportes y Estadísticas</h3>
+                <p>Genera reportes detallados y análisis estadísticos del sistema hospitalario.</p>
+                <a href="/reportes" class="btn btn-success">Ver Reportes</a>
+            </div>
+            
+            <div class="action-card">
+                <h3>📝 Formulario Web</h3>
                 <p>Accede al formulario interactivo para registro rápido y eficiente de pacientes.</p>
                 <a href="/static/Index.html" class="btn btn-info">Abrir Formulario</a>
             </div>
@@ -334,9 +356,9 @@
             </div>
             
             <div class="action-card">
-                <h3>📈 Reportes</h3>
-                <p>Genera reportes estadísticos y análisis de datos del sistema hospitalario.</p>
-                <a href="#" class="btn btn-success">Próximamente</a>
+                <h3>⚙️ Configuración</h3>
+                <p>Gestiona especialidades, horarios médicos y configuraciones del sistema.</p>
+                <a href="#" class="btn btn-warning">Configurar</a>
             </div>
         </div>
     </div>

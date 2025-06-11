@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import pe.edu.upeu.syshost.service.PacienteService;
 import pe.edu.upeu.syshost.service.MedicoService;
 import pe.edu.upeu.syshost.service.CitaService;
+import pe.edu.upeu.syshost.service.HistorialMedicoService;
+import pe.edu.upeu.syshost.service.EspecialidadService;
 
 @Controller
 public class HomeController {
@@ -19,6 +21,12 @@ public class HomeController {
     
     @Autowired
     private CitaService citaService;
+    
+    @Autowired
+    private HistorialMedicoService historialService;
+    
+    @Autowired
+    private EspecialidadService especialidadService;
 
     @GetMapping("/")
     public String index(Model model) {
@@ -28,6 +36,8 @@ public class HomeController {
         model.addAttribute("medicosActivos", medicoService.getMedicosActivos().size());
         model.addAttribute("citasProgramadas", citaService.contarCitasProgramadas());
         model.addAttribute("citasHoy", citaService.contarCitasHoy());
+        model.addAttribute("consultasHoy", historialService.contarConsultasHoy());
+        model.addAttribute("totalEspecialidades", especialidadService.contarEspecialidades());
         return "index";
     }
 
@@ -50,5 +60,23 @@ public class HomeController {
         model.addAttribute("pacientes", pacienteService.getAllPacientes());
         model.addAttribute("medicos", medicoService.getAllMedicos());
         return "citas";
+    }
+    
+    @GetMapping("/historiales")
+    public String historiales(Model model) {
+        model.addAttribute("historiales", historialService.getAllHistoriales());
+        model.addAttribute("pacientes", pacienteService.getAllPacientes());
+        model.addAttribute("medicos", medicoService.getAllMedicos());
+        return "historiales";
+    }
+    
+    @GetMapping("/reportes")
+    public String reportes(Model model) {
+        model.addAttribute("totalPacientes", pacienteService.contarPacientes());
+        model.addAttribute("totalMedicos", medicoService.contarMedicos());
+        model.addAttribute("citasProgramadas", citaService.contarCitasProgramadas());
+        model.addAttribute("consultasHoy", historialService.contarConsultasHoy());
+        model.addAttribute("totalEspecialidades", especialidadService.contarEspecialidades());
+        return "reportes";
     }
 }

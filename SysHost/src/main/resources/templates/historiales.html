@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historiales Médicos - SysHost</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --info-color: #8e44ad;
+            --background-color: #ecf0f1;
+            --text-color: #2c3e50;
+            --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            color: var(--primary-color);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: 1fr auto auto auto;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-input, .select-input {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus, .select-input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #2ecc71);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #c0392b);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color), #e67e22);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info-color), #9b59b6);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .table-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        tr:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        .vital-signs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .vital-sign {
+            background: rgba(52, 152, 219, 0.1);
+            padding: 4px 8px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        @media (max-width: 1200px) {
+            .controls {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .controls > * {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            table {
+                font-size: 0.8rem;
+            }
+            
+            th, td {
+                padding: 8px 6px;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .datetime-display {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .diagnosis-text {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>📋 Historiales Médicos</h1>
+        <p>Gestión de Historiales Clínicos</p>
+    </header>
+
+    <div class="container">
+        <a href="/" class="back-link">← Volver al Dashboard</a>
+        
+        <div class="controls">
+            <input type="text" class="search-input" placeholder="Buscar por paciente o médico..." id="searchInput">
+            <button class="btn btn-primary" onclick="buscarHistoriales()">🔍 Buscar</button>
+            <button class="btn btn-success" onclick="mostrarFormularioNuevo()">➕ Nuevo Historial</button>
+            <button class="btn btn-primary" onclick="cargarTodos()">📋 Mostrar Todos</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Paciente</th>
+                        <th>Médico</th>
+                        <th>Fecha Consulta</th>
+                        <th>Diagnóstico</th>
+                        <th>Signos Vitales</th>
+                        <th>Tratamiento</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="historialesTable">
+                    <tr class="loading">
+                        <td colspan="8">Cargando historiales...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal para nuevo/editar historial -->
+    <div id="historialModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border-radius: 15px; width: 95%; max-width: 900px; max-height: 95vh; overflow-y: auto;">
+            <h3 id="modalTitle">Nuevo Historial Médico</h3>
+            <form id="historialForm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                <input type="hidden" id="historialId">
+                
+                <div>
+                    <label>Paciente *</label>
+                    <select id="pacienteId" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        <option value="">Seleccionar paciente...</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Médico *</label>
+                    <select id="medicoId" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        <option value="">Seleccionar médico...</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Fecha Consulta *</label>
+                    <input type="datetime-local" id="fechaConsulta" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                
+                <div>
+                    <label>Próxima Cita</label>
+                    <input type="datetime-local" id="proximaCita" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                
+                <div style="grid-column: 1 / -1;">
+                    <label>Diagnóstico *</label>
+                    <textarea id="diagnostico" rows="3" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                </div>
+                
+                <div style="grid-column: 1 / -1;">
+                    <label>Tratamiento</label>
+                    <textarea id="tratamiento" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                </div>
+                
+                <div style="grid-column: 1 / -1;">
+                    <label>Medicamentos</label>
+                    <textarea id="medicamentos" rows="2" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                </div>
+                
+                <div style="grid-column: 1 / -1;">
+                    <label>Exámenes</label>
+                    <textarea id="examenes" rows="2" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                </div>
+                
+                <div style="grid-column: 1 / -1;">
+                    <label>Observaciones</label>
+                    <textarea id="observaciones" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                </div>
+                
+                <div>
+                    <label>Peso (kg)</label>
+                    <input type="number" id="peso" step="0.1" min="0" max="500" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                
+                <div>
+                    <label>Estatura (m)</label>
+                    <input type="number" id="estatura" step="0.01" min="0" max="3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                
+                <div>
+                    <label>Presión Sistólica</label>
+                    <input type="number" id="presionSistolica" min="30" max="300" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                
+                <div>
+                    <label>Presión Diastólica</label>
+                    <input type="number" id="presionDiastolica" min="20" max="200" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                
+                <div>
+                    <label>Temperatura (°C)</label>
+                    <input type="number" id="temperatura" step="0.1" min="30" max="45" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                
+                <div>
+                    <label>Pulso (bpm)</label>
+                    <input type="number" id="pulso" min="30" max="200" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                
+                <div style="grid-column: 1 / -1; display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem;">
+                    <button type="button" class="btn btn-danger" onclick="cerrarModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let editandoHistorial = false;
+
+        async function cargarTodos() {
+            try {
+                const response = await fetch('/api/historiales');
+                const result = await response.json();
+
+                if (result.success) {
+                    actualizarTabla(result.data);
+                    document.getElementById('searchInput').value = '';
+                } else {
+                    mostrarAlerta('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al cargar historiales', 'error');
+            }
+        }
+
+        function actualizarTabla(historiales) {
+            const tbody = document.getElementById('historialesTable');
+            tbody.innerHTML = '';
+
+            if (historiales.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="no-data">No se encontraron historiales</td></tr>';
+                return;
+            }
+
+            historiales.forEach(historial => {
+                const fechaConsulta = new Date(historial.fechaConsulta);
+                const fecha = fechaConsulta.toLocaleDateString('es-ES');
+                const hora = fechaConsulta.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'});
+                
+                const signosVitales = [];
+                if (historial.peso) signosVitales.push(`Peso: ${historial.peso}kg`);
+                if (historial.presionSistolica && historial.presionDiastolica) {
+                    signosVitales.push(`PA: ${historial.presionSistolica}/${historial.presionDiastolica}`);
+                }
+                if (historial.temperatura) signosVitales.push(`T: ${historial.temperatura}°C`);
+                if (historial.pulso) signosVitales.push(`P: ${historial.pulso}bpm`);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${historial.id}</td>
+                    <td>${historial.paciente.nombre}</td>
+                    <td>
+                        <div>${historial.medico.nombre}</div>
+                        <small style="color: #666;">${historial.medico.especialidad}</small>
+                    </td>
+                    <td>
+                        <div>${fecha}</div>
+                        <small class="datetime-display">${hora}</small>
+                    </td>
+                    <td>
+                        <div class="diagnosis-text" title="${historial.diagnostico}">
+                            ${historial.diagnostico.length > 50 ? historial.diagnostico.substring(0, 50) + '...' : historial.diagnostico}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="vital-signs">
+                            ${signosVitales.map(signo => `<div class="vital-sign">${signo}</div>`).join('')}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="diagnosis-text" title="${historial.tratamiento || 'Sin tratamiento'}">
+                            ${historial.tratamiento ? (historial.tratamiento.length > 30 ? historial.tratamiento.substring(0, 30) + '...' : historial.tratamiento) : 'Sin tratamiento'}
+                        </div>
+                    </td>
+                    <td class="actions">
+                        <button class="btn btn-primary btn-sm" onclick="verDetalle(${historial.id})">👁️</button>
+                        <button class="btn btn-warning btn-sm" onclick="editarHistorial(${historial.id})">✏️</button>
+                        <button class="btn btn-danger btn-sm" onclick="eliminarHistorial(${historial.id})">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function verDetalle(id) {
+            try {
+                const response = await fetch(`/api/historiales/${id}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const historial = result.data;
+                    const fechaConsulta = new Date(historial.fechaConsulta);
+                    const proximaCita = historial.proximaCita ? new Date(historial.proximaCita) : null;
+                    
+                    alert(`Detalles del Historial Médico:
+                    
+ID: ${historial.id}
+Paciente: ${historial.paciente.nombre}
+Médico: ${historial.medico.nombre} (${historial.medico.especialidad})
+Fecha Consulta: ${fechaConsulta.toLocaleDateString('es-ES')} ${fechaConsulta.toLocaleTimeString('es-ES')}
+Diagnóstico: ${historial.diagnostico}
+Tratamiento: ${historial.tratamiento || 'No especificado'}
+Medicamentos: ${historial.medicamentos || 'No especificados'}
+Exámenes: ${historial.examenes || 'No especificados'}
+Observaciones: ${historial.observaciones || 'Sin observaciones'}
+
+Signos Vitales:
+- Peso: ${historial.peso || 'No registrado'} kg
+- Estatura: ${historial.estatura || 'No registrada'} m
+- Presión Arterial: ${historial.presionSistolica && historial.presionDiastolica ? historial.presionSistolica + '/' + historial.presionDiastolica : 'No registrada'}
+- Temperatura: ${historial.temperatura || 'No registrada'} °C
+- Pulso: ${historial.pulso || 'No registrado'} bpm
+
+Próxima Cita: ${proximaCita ? proximaCita.toLocaleDateString('es-ES') + ' ' + proximaCita.toLocaleTimeString('es-ES') : 'No programada'}`);
+                } else {
+                    mostrarAlerta('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al obtener detalles del historial', 'error');
+            }
+        }
+
+        function mostrarFormularioNuevo() {
+            editandoHistorial = false;
+            document.getElementById('modalTitle').textContent = 'Nuevo Historial Médico';
+            document.getElementById('historialForm').reset();
+            document.getElementById('historialId').value = '';
+            
+            // Establecer fecha actual
+            const ahora = new Date();
+            ahora.setMinutes(ahora.getMinutes() - ahora.getTimezoneOffset());
+            document.getElementById('fechaConsulta').value = ahora.toISOString().slice(0, 16);
+            
+            cargarPacientesYMedicos();
+            document.getElementById('historialModal').style.display = 'block';
+        }
+
+        async function cargarPacientesYMedicos() {
+            try {
+                // Cargar pacientes
+                const pacientesResponse = await fetch('/api/pacientes');
+                const pacientesResult = await pacientesResponse.json();
+                
+                const pacienteSelect = document.getElementById('pacienteId');
+                pacienteSelect.innerHTML = '<option value="">Seleccionar paciente...</option>';
+                
+                if (pacientesResult.success) {
+                    pacientesResult.data.forEach(paciente => {
+                        const option = document.createElement('option');
+                        option.value = paciente.id;
+                        option.textContent = `${paciente.nombre} - ${paciente.dni}`;
+                        pacienteSelect.appendChild(option);
+                    });
+                }
+
+                // Cargar médicos
+                const medicosResponse = await fetch('/api/medicos');
+                const medicosResult = await medicosResponse.json();
+                
+                const medicoSelect = document.getElementById('medicoId');
+                medicoSelect.innerHTML = '<option value="">Seleccionar médico...</option>';
+                
+                if (medicosResult.success) {
+                    medicosResult.data.forEach(medico => {
+                        const option = document.createElement('option');
+                        option.value = medico.id;
+                        option.textContent = `${medico.nombre} - ${medico.especialidad}`;
+                        medicoSelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al cargar pacientes y médicos', 'error');
+            }
+        }
+
+        function cerrarModal() {
+            document.getElementById('historialModal').style.display = 'none';
+        }
+
+        // Manejar envío del formulario
+        document.getElementById('historialForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const historial = {
+                paciente: { id: parseInt(document.getElementById('pacienteId').value) },
+                medico: { id: parseInt(document.getElementById('medicoId').value) },
+                fechaConsulta: new Date(document.getElementById('fechaConsulta').value).toISOString(),
+                proximaCita: document.getElementById('proximaCita').value ? new Date(document.getElementById('proximaCita').value).toISOString() : null,
+                diagnostico: document.getElementById('diagnostico').value,
+                tratamiento: document.getElementById('tratamiento').value || null,
+                medicamentos: document.getElementById('medicamentos').value || null,
+                examenes: document.getElementById('examenes').value || null,
+                observaciones: document.getElementById('observaciones').value || null,
+                peso: parseFloat(document.getElementById('peso').value) || null,
+                estatura: parseFloat(document.getElementById('estatura').value) || null,
+                presionSistolica: parseInt(document.getElementById('presionSistolica').value) || null,
+                presionDiastolica: parseInt(document.getElementById('presionDiastolica').value) || null,
+                temperatura: parseFloat(document.getElementById('temperatura').value) || null,
+                pulso: parseInt(document.getElementById('pulso').value) || null
+            };
+
+            try {
+                const url = editandoHistorial ? `/api/historiales/${document.getElementById('historialId').value}` : '/api/historiales';
+                const method = editandoHistorial ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(historial)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    mostrarAlerta(editandoHistorial ? 'Historial actualizado exitosamente' : 'Historial registrado exitosamente', 'success');
+                    cerrarModal();
+                    cargarTodos();
+                } else {
+                    mostrarAlerta('Error: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al guardar historial', 'error');
+            }
+        });
+
+        function mostrarAlerta(mensaje, tipo) {
+            const alerta = document.createElement('div');
+            alerta.className = `alert alert-${tipo}`;
+            alerta.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 10px;
+                color: white;
+                font-weight: bold;
+                z-index: 10000;
+                max-width: 400px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            `;
+            
+            if (tipo === 'success') {
+                alerta.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
+            } else if (tipo === 'warning') {
+                alerta.style.background = 'linear-gradient(135deg, #f39c12, #e67e22)';
+            } else {
+                alerta.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
+            }
+            
+            alerta.textContent = mensaje;
+            document.body.appendChild(alerta);
+
+            setTimeout(() => {
+                alerta.remove();
+            }, 5000);
+        }
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('historialModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarModal();
+            }
+        });
+
+        // Cargar historiales al cargar la página
+        document.addEventListener('DOMContentLoaded', cargarTodos);
+    </script>
+</body>
+</html>
